@@ -47,7 +47,7 @@ void draw() {
   fill( 255, 255 );
   float avgVal = (in.left.level() + in.right.level())/2;
   avgVal = avgVal*1000;
-
+ 
   rect(0, 50, avgVal*10, 100 );
   fill(0);  
   noStroke();
