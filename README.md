@@ -1,5 +1,9 @@
 # PCGroupProject
 
+<b>Use code found in folders named xxxWifi </b>
+\
+\
+\
 In Processing go to Tools --> Install processing-java\
 
 In Terminal run following command :\
@@ -14,6 +18,7 @@ To re-run use processing-java \
 \
 In Arduino Install folllowing libraries: \
 ArduinoMqttClient \
-WiFiNINA \
+WiFiNINA 
+\
 
-Make sure arduino_secrets.h is in the same folder as arduino sketch\
+Make sure arduino_secrets.h is in the same folder as arduino sketch
