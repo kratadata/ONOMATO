@@ -4,16 +4,19 @@ import processing.serial.*;
 
 Minim minim;
 AudioSource in;
+AudioPlayer player;
 FFT fft;
 Serial port;
+float wAverage = 0;
+boolean fading = false;
 
 void setup() {
   size(512, 300);
   textSize(16);
-  //print(Serial.list());
-  port = new Serial(this,"/dev/cu.usbmodem14202", 9600);
-  
+  port = new Serial(this,"/dev/cu.usbmodem14202", 115200);
   minim = new Minim(this);
+  player = minim.loadFile("groove.mp3");
+  player.loop();
   in = minim.getLineIn();
   fft = new FFT(in.bufferSize(), in.sampleRate() );
 }
@@ -21,6 +24,7 @@ void setup() {
 void draw() {
   stroke(255);
   background(0);
+  float currentVolume = player.getGain();
   //for (int j = 0; j < in.bufferSize(); j++) {
   //float rightVal = in.right.get(j);
   //float leftVal = in.left.get(j);
@@ -46,20 +50,40 @@ void draw() {
   noStroke();
   fill( 255, 255 );
   float avgVal = (in.left.level() + in.right.level())/2;
-  avgVal = avgVal*1000;
+  avgVal = avgVal*100;
+  
+  wAverage = wAverage * 0.8;
+  wAverage += avgVal * 0.2;
  
-  rect(0, 50, avgVal*10, 100 );
+  rect(0, 50, wAverage*10, 100 );
   fill(0);  
   noStroke();
   rect(0, 0, width, 50);
   fill(255); 
   
-  String sb = str(avgVal);
-  sb = sb.substring(0,3);
-  text("Level " + sb, 20,20);
   
-  port.write(sb);
+  int sendToArduino = int(round(wAverage));
+  //sendToArduino = sendToArduino.substring(0,4);
+  //sendToArduino = sendToArduino;
+  text("Level " + sendToArduino, 20,20);
+  port.write("" + sendToArduino);
+  port.write("\n");
+  
+  if (sendToArduino > 10) {
+    if (!fading) {
+      player.rewind();
+      player.play();
+      player.shiftGain(currentVolume,13,1000); 
+      fading = true;
+    }
+  } else {
+    if (fading) {
+       player.shiftGain(currentVolume,-80,1000);
+       fading = false;
+     }
+  }
 }
+
 
 void stop()
 {
