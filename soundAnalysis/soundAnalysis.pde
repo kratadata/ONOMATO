@@ -1,6 +1,10 @@
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 import processing.serial.*;
+import processing.net.*;
+
+//int webServer = 5555; 
+//Client arduinoClient;
 
 Minim minim;
 AudioSource in;
@@ -13,7 +17,9 @@ boolean fading = false;
 void setup() {
   size(512, 300);
   textSize(16);
+  
   port = new Serial(this,"/dev/cu.usbmodem14202", 115200);
+  
   minim = new Minim(this);
   player = minim.loadFile("groove.mp3");
   player.loop();
@@ -22,6 +28,7 @@ void setup() {
 }
   
 void draw() {
+
   stroke(255);
   background(0);
   float currentVolume = player.getGain();
@@ -61,13 +68,16 @@ void draw() {
   rect(0, 0, width, 50);
   fill(255); 
   
-  
-  int sendToArduino = int(round(wAverage));
-  //sendToArduino = sendToArduino.substring(0,4);
-  //sendToArduino = sendToArduino;
-  text("Level " + sendToArduino, 20,20);
-  port.write("" + sendToArduino);
-  port.write("\n");
+   int sendToArduino = int(round(wAverage));
+    text("Level " + sendToArduino, 20,20);
+    port.write("" + sendToArduino);
+    port.write("\n");
+    
+  /*if(arduinoClient.available() > 0){
+    text("Level " + sendToArduino, 20,20);
+    port.write("" + sendToArduino);
+    port.write("\n");
+  }*/
   
   if (sendToArduino > 10) {
     if (!fading) {
@@ -83,8 +93,6 @@ void draw() {
      }
   }
 }
-
-
 void stop()
 {
   in.close();

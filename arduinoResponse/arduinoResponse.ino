@@ -1,5 +1,6 @@
 #include <LSS.h>
 #include <SoftwareSerial.h>
+
 SoftwareSerial servoSerial(8, 9);
 
 #define ledPin 6
@@ -21,14 +22,13 @@ void setup() {
   
   myLSS.wheelRPM(0);
   myLSS2.wheelRPM(0);
-  delay(300);
-
+  delay(200);
 }
 
 void loop() {
   int processingValue = 0;
   delay(1);
-  
+
   if (Serial.available() > 0)
   {
     // read string
